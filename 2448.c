@@ -1,3 +1,15 @@
+/* --------------------------------------------------------------------------
+Disciplina  : Algoritmo e Estrutura de Dados 2026S1
+Nome        : Victor de Bona Cândido
+Linguagem   : C
+Problema    : https://judge.beecrowd.com/pt/problems/view/2448
+Data        : 22/09/2026
+Objetivo    : Receber o número de casas e encomendas e calcular quanto tempo para entregar tudo
+Uso da IA   : Usei IA para verificar o código
+-------------------------------------------------------------------------- */
+
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
