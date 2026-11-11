@@ -16,21 +16,23 @@ int Busca_arvore(arvore r, char c);
 void INFIX(arvore r);
 void PREFIX(arvore r);
 void POSFIX(arvore r);
+int compara_string(char* s1, char* s2);
+void liberar(arvore r);
 
 
 int main(){
     arvore r = NULL;
-    while(EOF){
-        char* v = malloc(10*sizeof(char));
-        scanf("%s", v);
+    char v[10];
+    while(scanf("%s", v) != EOF){
         //Ou é P ou é I
-        if(v[1] == '\0'){
+        if(strlen(v) < 2){
             char letra;
-            scanf("%c", &letra);
+            scanf(" %c", &letra);
             if(v[0] == 'I'){
                 r = Inserir(r, Criar_No(letra));
             }
-            else{
+            else if(v[0] == 'P')
+            {
                 if(Busca_arvore(r, letra)){
                     printf("%c existe\n", letra);
                 }
@@ -39,13 +41,16 @@ int main(){
         }
 
         else{
-            if(!strcmp(v, "INFIXA")) INFIX(r);
-            if(!strcmp(v, "POSFIXA")) POSFIX(r);
-            if(!strcmp(v, "PREFIXA")) PREFIX(r);
+            char infix[7] = "INFIXA";
+            char posfix[8] = "POSFIXA";
+            char prefix[8] = "PREFIXA";
+            if(compara_string(v, infix)) INFIX(r);
+            if(compara_string(v, posfix)) POSFIX(r);
+            if(compara_string(v, prefix)) PREFIX(r);
             printf("\n");
         }
-        free(v);
     }
+    liberar(r);
     return 0;
 }
 
@@ -78,8 +83,8 @@ int Busca_arvore(arvore r, char c){
     if(r == NULL) return 0;
     if(r->letra == c) return 1;
     else{
-        Busca_arvore(r->dir, c);
-        Busca_arvore(r->esq, c);
+        if(r->letra > c) return Busca_arvore(r->esq, c);
+        else return Busca_arvore(r->dir, c);
     }
 }
 
@@ -104,5 +109,25 @@ void POSFIX(arvore r){
         POSFIX(r->esq);
         POSFIX(r->dir);
         printf("%c", r->letra);
+    }
+}
+
+int compara_string(char* s1, char* s2){
+    if(strlen(s1) != strlen(s2)) return 0;
+    else{
+        int i = 0;
+        while(i <= strlen(s1)){
+            if(s1[i] != s2[i]) return 0;
+            i++;
+        }
+    return 1;
+    }
+}
+
+void liberar(arvore r){
+    if(r != NULL){
+        liberar(r->esq);
+        liberar(r->dir);
+        free(r);
     }
 }
