@@ -36,7 +36,7 @@ int main(){
                 if(Busca_arvore(r, letra)){
                     printf("%c existe\n", letra);
                 }
-                else printf("%c não existe\n", letra);
+                else printf("%c nao existe\n", letra);
             }
         }
 
