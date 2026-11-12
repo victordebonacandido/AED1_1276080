@@ -13,9 +13,9 @@ typedef struct No* arvore;
 No* Criar_No(char c);
 arvore Inserir(arvore r, No* novo);
 int Busca_arvore(arvore r, char c);
-void INFIX(arvore r);
-void PREFIX(arvore r);
-void POSFIX(arvore r);
+void INFIX(arvore r, int *primeiro);
+void PREFIX(arvore r, int *primeiro);
+void POSFIX(arvore r, int *primeiro);
 int compara_string(char* s1, char* s2);
 void liberar(arvore r);
 
@@ -41,12 +41,13 @@ int main(){
         }
 
         else{
+            int primeiro = 1;
             char infix[7] = "INFIXA";
             char posfix[8] = "POSFIXA";
             char prefix[8] = "PREFIXA";
-            if(compara_string(v, infix)) INFIX(r);
-            if(compara_string(v, posfix)) POSFIX(r);
-            if(compara_string(v, prefix)) PREFIX(r);
+            if(compara_string(v, infix)) INFIX(r, &primeiro);
+            if(compara_string(v, posfix)) POSFIX(r, &primeiro);
+            if(compara_string(v, prefix)) PREFIX(r, &primeiro);
             printf("\n");
         }
     }
@@ -88,27 +89,39 @@ int Busca_arvore(arvore r, char c){
     }
 }
 
-void INFIX(arvore r){
+void INFIX(arvore r, int *primeiro){
     if(r != NULL){
-        INFIX(r->esq);
-        printf("%c", r->letra);
-        INFIX(r->dir);
+        INFIX(r->esq, primeiro);
+        if(*primeiro){
+            printf("%c", r->letra);
+            *primeiro = 0;
+        }
+        else printf(" %c", r->letra);
+        INFIX(r->dir, primeiro);
     }
 }
 
-void PREFIX(arvore r){
+void PREFIX(arvore r, int *primeiro){
     if(r != NULL){
-        printf("%c", r->letra);
-        PREFIX(r->esq);
-        PREFIX(r->dir);
+        if(*primeiro){
+            printf("%c", r->letra);
+            *primeiro = 0;
+        }
+        else printf(" %c", r->letra);
+        PREFIX(r->esq, primeiro);
+        PREFIX(r->dir, primeiro);
     }
 }
 
-void POSFIX(arvore r){
+void POSFIX(arvore r, int *primeiro){
     if(r != NULL){
-        POSFIX(r->esq);
-        POSFIX(r->dir);
-        printf("%c", r->letra);
+        POSFIX(r->esq, primeiro);
+        POSFIX(r->dir, primeiro);
+        if(*primeiro){
+            printf("%c", r->letra);
+            *primeiro = 0;
+        }
+        else printf(" %c", r->letra);
     }
 }
 
