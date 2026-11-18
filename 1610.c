@@ -33,10 +33,21 @@ int main(){
             PushLista((g->listaVertices[QualNo-1]), Info);
         }
         int visitado[num_doc];
+        int tem_ciclo = 0;
         for(int k = 0; k < num_doc; k++){
             visitado[k] = 0;
         }
-        if(HaCiclo(g, 0, visitado)) printf("SIM\n");
+        
+        for(int l = 0; l < num_doc; l++){
+            if(visitado[l] == 0){
+                if(HaCiclo(g, l, visitado)){
+                    tem_ciclo = 1;
+                    break;
+                }
+            }
+        }
+
+        if(tem_ciclo) printf("SIM\n");
         else printf("NAO\n");
         
         LiberarGrafo(g);
@@ -74,7 +85,7 @@ void PushLista(No** lista,int valor){
 
 int HaCiclo(Grafo *g, int v, int visitado[]){
     if(visitado[v] == 1) return 1;
-    if(visitado[v] == 2) return 2;
+    if(visitado[v] == 2) return 0;
     visitado[v] = 1;
     No* temp = g->listaVertices[v];
     while(temp != NULL){
@@ -88,7 +99,7 @@ int HaCiclo(Grafo *g, int v, int visitado[]){
 Grafo* CriarGrafo(int numverticies){
     Grafo* g = malloc(sizeof(Grafo));
     g->numVertices = numverticies;
-    g->listaVertices = malloc(g->numVertices*sizeof(No*));
+    g->listaVertices = calloc(g->numVertices, sizeof(No*));
     return g;
 }
 
