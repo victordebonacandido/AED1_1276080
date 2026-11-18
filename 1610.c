@@ -1,8 +1,117 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int main(){
+typedef struct No{
+    int valor;
+    struct No* prox;
+}No;
 
+typedef struct GrafoNo{
+    int numVertices;
+    No **listaVertices;
+}Grafo;
+
+No* CriarNo(int valor);
+int LiberarLista(No* lista);
+void PushLista(No** lista,int valor);
+int HaCiclo(Grafo *g, int v, int visitado[]);
+Grafo* CriarGrafo(int numverticies);
+void LiberarGrafo(Grafo* g);
+
+
+int main(){
+    int instancias = 0;
+    scanf(" %d", &instancias);
+    for(int i = 0; i < instancias; i++){
+        int num_doc, num_vert;
+        scanf(" %d %d", &num_doc, num_vert);
+        Grafo *g = CriarGrafo(num_doc);
+        for(int j = 0; j < num_vert; j++){
+            int QualNo, Info;
+            scanf(" %d", &QualNo);
+            scanf("%d", &Info);
+            PushLista((g->listaVertices[QualNo-1]), Info);
+        }
+        int visitado[num_doc];
+        for(int k = 0; k < num_doc; k++){
+            visitado[k] = 0;
+        }
+        if(HaCiclo(g, 0, visitado)) printf("SIM\n");
+        else printf("NAO\n");
+        
+        LiberarGrafo(g);
+    }
+}
+
+No* CriarNo(int valor){
+    No* novo = malloc(sizeof(No));
+    novo->valor = valor;
+    novo->prox = NULL;
+    return novo;
+}
+
+int LiberarLista(No* lista){
+   No* temp ;
+   while(lista != NULL){
+        temp = lista;
+        lista = lista->prox;
+        free(temp);
+   }
+}
+
+void PushLista(No** lista,int valor){
+    No* novo = CriarNo(valor);
+    No* temp = (*lista);
+    if((*lista) == NULL){
+        *lista = novo;
+        return;
+    }
+    while(temp->prox != NULL){
+        temp = temp->prox;
+    }
+    temp->prox = novo;
+}
+
+int HaCiclo(Grafo *g, int v, int visitado[]){
+    if(visitado[v] == 1) return 1;
+    if(visitado[v] == 2) return 2;
+    visitado[v] = 1;
+    No* temp = g->listaVertices[v];
+    while(temp != NULL){
+        if(HaCiclo(g, (temp->valor)-1, visitado)) return 1;
+        temp = temp->prox;
+    }
+    visitado[v] = 2;
+    return 0;
+}
+
+Grafo* CriarGrafo(int numverticies){
+    Grafo* g = malloc(sizeof(Grafo));
+    g->numVertices = numverticies;
+    g->listaVertices = malloc(g->numVertices*sizeof(No*));
+    return g;
+}
+
+void LiberarGrafo(Grafo* g){
+    for(int i = 0; i < g->numVertices; i++){
+        LiberarLista(g->listaVertices[i]);
+    }
+    free(g->listaVertices);
+    free(g);
+}
+
+
+/*
+int DFS(int** matriz, int v, int tam, int visitado[]){
+    if(visitado[v] == 1) return 1;
+    visitado[v] = 1;
+    for(int i = 0; i < tam; i++){
+        if(matriz[v][i] == 1){
+            if(DFS(matriz, i, tam, visitado)) return 1;
+        }
+    }
+    visitado[v] = 2;
+    return 0;
 }
 
 int** matriz(int tam){
@@ -27,3 +136,4 @@ void LiberarMatriz(int** matriz, int tam){
     }
     free(matriz);
 }
+*/
