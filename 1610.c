@@ -1,3 +1,15 @@
+/* --------------------------------------------------------------------------
+Disciplina  : Algortimo e Estrutura de Dados 2026S1
+Nome        : Victor de Bona Cândido
+Linguagem   : C
+Problema    : https://judge.beecrowd.com/pt/problems/view/1610
+Data        : 30/08/2026
+Objetivo    : Ver se há um ciclo em um grafo direcioando
+Dificuldade : Aprender a usar o grafo em vez de matriz como uma lista
+Uso de IA   : Usei pq não parava de dar runtime error e, no final, era a falta de um &
+-------------------------------------------------------------------------- */
+
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -12,7 +24,7 @@ typedef struct GrafoNo{
 }Grafo;
 
 No* CriarNo(int valor);
-int LiberarLista(No* lista);
+void LiberarLista(No* lista);
 void PushLista(No** lista,int valor);
 int HaCiclo(Grafo *g, int v, int visitado[]);
 Grafo* CriarGrafo(int numverticies);
@@ -24,13 +36,13 @@ int main(){
     scanf(" %d", &instancias);
     for(int i = 0; i < instancias; i++){
         int num_doc, num_vert;
-        scanf(" %d %d", &num_doc, num_vert);
+        scanf(" %d %d", &num_doc, &num_vert);
         Grafo *g = CriarGrafo(num_doc);
         for(int j = 0; j < num_vert; j++){
             int QualNo, Info;
             scanf(" %d", &QualNo);
             scanf("%d", &Info);
-            PushLista((g->listaVertices[QualNo-1]), Info);
+            PushLista(&(g->listaVertices[QualNo-1]), Info);
         }
         int visitado[num_doc];
         int tem_ciclo = 0;
@@ -61,7 +73,7 @@ No* CriarNo(int valor){
     return novo;
 }
 
-int LiberarLista(No* lista){
+void LiberarLista(No* lista){
    No* temp ;
    while(lista != NULL){
         temp = lista;
@@ -72,15 +84,8 @@ int LiberarLista(No* lista){
 
 void PushLista(No** lista,int valor){
     No* novo = CriarNo(valor);
-    No* temp = (*lista);
-    if((*lista) == NULL){
-        *lista = novo;
-        return;
-    }
-    while(temp->prox != NULL){
-        temp = temp->prox;
-    }
-    temp->prox = novo;
+    novo->prox = (*lista);
+    (*lista) = novo;
 }
 
 int HaCiclo(Grafo *g, int v, int visitado[]){
@@ -110,41 +115,3 @@ void LiberarGrafo(Grafo* g){
     free(g->listaVertices);
     free(g);
 }
-
-
-/*
-int DFS(int** matriz, int v, int tam, int visitado[]){
-    if(visitado[v] == 1) return 1;
-    visitado[v] = 1;
-    for(int i = 0; i < tam; i++){
-        if(matriz[v][i] == 1){
-            if(DFS(matriz, i, tam, visitado)) return 1;
-        }
-    }
-    visitado[v] = 2;
-    return 0;
-}
-
-int** matriz(int tam){
-    int** M = malloc(tam*sizeof(int*));
-    
-    for(int i = 0; i < tam; i++){
-        M[i] = malloc(tam*sizeof(int));
-    }
-
-    for(int i = 0; i < tam; i++){
-        for(int j = 0; j < tam; j++){
-            M[i][j] = 0;
-        }
-    }
-
-    return M;
-}
-
-void LiberarMatriz(int** matriz, int tam){
-    for(int i = 0; i < tam; i++){
-        free(matriz[i]);
-    }
-    free(matriz);
-}
-*/
