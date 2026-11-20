@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
 int** GrafoM(int tam);
 void LiberarGrafoM(int** matriz, int tam);
-void DFS(int** grafo, int v, int tam, int *visitado);
-
+void DFS(int** grafo, int v, int tam, int *visitado, int* conect, int* pos);
+void BubbleSort(int* vetor, int fim);
+int EncontrarFim(int* vetor);
+void PrintarVetor(int* vetor, int fim);
 
 int main(){
     int instancias;
@@ -23,20 +24,28 @@ int main(){
             M[no2-'a'][no1-'a'] = 1;
         }
 
-        //Funcionamento do código
-
         printf("Case #%d:\n", i);
         int vezes = 0;
         int* visitado = calloc(num_vert, sizeof(int));
+        int* controle = malloc(27*sizeof(int));
+
         for(int k = 0; k < num_vert; k++){
             if(!visitado[k]){
-                DFS(M, k, num_vert, visitado);
-                printf("\n");
+                for(int j = 0; j < 27; j++){
+                    controle[j] = -1;
+                }
+                int pos = 0;
+                DFS(M, k, num_vert, visitado, controle, &pos);
+                int fim = EncontrarFim(controle);
+                BubbleSort(controle, fim);
+                PrintarVetor(controle, fim);
                 vezes++;
             }
         }
+
         printf("%d connected components\n\n", vezes);
         free(visitado);
+        free(controle);
         LiberarGrafoM(M, num_vert);
     }
     return 0;
@@ -57,24 +66,39 @@ void LiberarGrafoM(int** matriz, int tam){
     free(matriz);
 }
 
-void DFS(int** grafo, int v, int tam, int *visitado, int* conect){
+void DFS(int** grafo, int v, int tam, int *visitado, int* conect, int* pos){
     visitado[v] = 1;
-    printf("%c,", v + 'a');
+    conect[(*pos)++] = v;
     for(int i = 0; i < tam; i++){
         if(grafo[v][i] == 1 && !visitado[i]){
-            DFS(grafo, i, tam, visitado);
+            DFS(grafo, i, tam, visitado, conect, pos);
         }
     }
 }
 
-int* InserirOrdenadoVetor(int* vetor, int* tam, int valor) {
-    vetor = realloc(vetor, (*tam + 1) * sizeof(int));
-    int i = *tam - 1;
-    while (i >= 0 && vetor[i] > valor) {
-        vetor[i + 1] = vetor[i];
-        i--;
+void BubbleSort(int* vetor, int fim){
+    for(int i = 0; i < fim-1; i++){
+        for(int j = i+1; j < fim; j++){
+            if(vetor[i] > vetor[j]){
+                int temp = vetor[i];
+                vetor[i] = vetor[j];
+                vetor[j] = temp;
+            }
+        }
     }
-    vetor[i + 1] = valor;
-    (*tam)++;
-    return vetor;
+}
+
+int EncontrarFim(int* vetor){
+    int i = 0;
+    while(vetor[i] != -1){
+        i++;
+    }
+    return i;
+}
+
+void PrintarVetor(int* vetor, int fim){
+    for(int i = 0; i < fim; i++){
+        printf("%c,", vetor[i] + 'a');
+    }
+    printf("\n");
 }
